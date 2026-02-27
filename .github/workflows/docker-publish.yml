@@ -4,9 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       flash_attn_jobs:
-        description: "flash-attn compile parallelism (recommended: 2 on private runner, 4 on public runner)"
+        description: "flash-attn compile parallelism (recommended: 2; use 1 if runner disconnects)"
         required: false
-        default: "4"
+        default: "2"
+      nvcc_threads:
+        description: "NVCC compile threads (recommended: 2; use 1 for maximum stability)"
+        required: false
+        default: "2"
       image_tag:
         description: "Docker tag to push"
         required: false
@@ -57,7 +61,7 @@ jobs:
           tags: taehoon3/runpod:${{ github.event.inputs.image_tag }}
           build-args: |
             FLASH_ATTN_MAX_JOBS=${{ github.event.inputs.flash_attn_jobs }}
-            FLASH_ATTN_NVCC_THREADS=${{ github.event.inputs.flash_attn_jobs }}
+            FLASH_ATTN_NVCC_THREADS=${{ github.event.inputs.nvcc_threads }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: false
